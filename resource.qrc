@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/img">
+        <file alias="led_green">img/green.png</file>
+        <file alias="program_icon">img/icon.ico</file>
+        <file alias="led_red">img/red.png</file>
+        <file alias="led_yellow">img/yellow.png</file>
+    </qresource>
+</RCC>
