@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>505</height>
+    <width>852</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,20 +28,18 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QTextBrowser" name="txtBros_recv">
+       <widget class="QPlainTextEdit" name="edt_Recv">
         <property name="font">
          <font>
-          <family>微软雅黑</family>
+          <family>YaHei Consolas Hybrid</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
-        <property name="lineWrapMode">
-         <enum>QTextEdit::WidgetWidth</enum>
-        </property>
-        <property name="acceptRichText">
+        <property name="undoRedoEnabled">
          <bool>false</bool>
         </property>
-        <property name="openLinks">
-         <bool>false</bool>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -90,20 +88,20 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>120</width>
+              <width>125</width>
               <height>40</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>120</width>
+              <width>125</width>
               <height>40</height>
              </size>
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
-              <pointsize>12</pointsize>
+              <family>Consolas</family>
+              <pointsize>14</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -158,7 +156,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
               <weight>50</weight>
               <bold>false</bold>
@@ -191,10 +189,10 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="currentText">
@@ -219,10 +217,10 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
            </widget>
@@ -243,7 +241,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
               <weight>50</weight>
               <bold>false</bold>
@@ -270,7 +268,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
               <weight>50</weight>
               <bold>false</bold>
@@ -297,7 +295,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
               <weight>50</weight>
               <bold>false</bold>
@@ -318,11 +316,14 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -336,10 +337,10 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>9</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
            </widget>
@@ -350,7 +351,7 @@
          <widget class="QCheckBox" name="chkBox_recvAsHex">
           <property name="font">
            <font>
-            <family>微软雅黑</family>
+            <family>Consolas</family>
            </font>
           </property>
           <property name="text">
@@ -362,13 +363,38 @@
          <widget class="QCheckBox" name="chkBox_saveRecv">
           <property name="font">
            <font>
-            <family>微软雅黑</family>
+            <family>Consolas</family>
            </font>
           </property>
           <property name="text">
            <string>Save as file</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="chkBox_divideShow">
+          <property name="font">
+           <font>
+            <family>Consolas</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>Divide show</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QPushButton" name="btn_clearRecv">
@@ -392,29 +418,16 @@
           </property>
           <property name="font">
            <font>
-            <family>微软雅黑</family>
-            <pointsize>12</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <family>Consolas</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <property name="text">
            <string>Clear Recv</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
@@ -430,7 +443,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QPlainTextEdit" name="txtEdit_send">
+       <widget class="QPlainTextEdit" name="edt_send">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -445,7 +458,8 @@
         </property>
         <property name="font">
          <font>
-          <family>微软雅黑</family>
+          <family>YaHei Consolas Hybrid</family>
+          <pointsize>10</pointsize>
          </font>
         </property>
        </widget>
@@ -460,6 +474,30 @@
           <property name="sizeConstraint">
            <enum>QLayout::SetFixedSize</enum>
           </property>
+          <item>
+           <widget class="QCheckBox" name="chkBox_autoAddReturn">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>152</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>YaHei Consolas Hybrid</family>
+             </font>
+            </property>
+            <property name="text">
+             <string>Auto Add Return</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCheckBox" name="chkBox_sendAsHex">
             <property name="sizePolicy">
@@ -476,11 +514,11 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>YaHei Consolas Hybrid</family>
              </font>
             </property>
             <property name="text">
-             <string>As Hex</string>
+             <string>Send As Hex</string>
             </property>
            </widget>
           </item>
@@ -496,17 +534,17 @@
               </property>
               <property name="font">
                <font>
-                <family>微软雅黑</family>
+                <family>Consolas</family>
                 <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
-               <string>Auto</string>
+               <string>Auto Send</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_autoSendPeriod">
+             <widget class="QLineEdit" name="edt_autoSendPeriod">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
                 <horstretch>0</horstretch>
@@ -515,7 +553,7 @@
               </property>
               <property name="font">
                <font>
-                <family>微软雅黑</family>
+                <family>Consolas</family>
                </font>
               </property>
               <property name="text">
@@ -536,7 +574,7 @@
               </property>
               <property name="font">
                <font>
-                <family>微软雅黑</family>
+                <family>Consolas</family>
                 <pointsize>9</pointsize>
                </font>
               </property>
@@ -573,7 +611,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
               <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
@@ -594,7 +632,7 @@
             </property>
             <property name="font">
              <font>
-              <family>微软雅黑</family>
+              <family>Consolas</family>
              </font>
             </property>
             <property name="text">
@@ -631,13 +669,13 @@ Send</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>40</width>
+          <width>50</width>
           <height>16777215</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <family>微软雅黑</family>
+          <family>Consolas</family>
          </font>
         </property>
         <property name="text">
@@ -661,7 +699,7 @@ Send</string>
         </property>
         <property name="font">
          <font>
-          <family>微软雅黑</family>
+          <family>Consolas</family>
          </font>
         </property>
         <property name="text">
@@ -686,7 +724,7 @@ Send</string>
         </property>
         <property name="font">
          <font>
-          <family>微软雅黑</family>
+          <family>Consolas</family>
          </font>
         </property>
         <property name="autoFillBackground">
@@ -709,7 +747,7 @@ Send</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>773</width>
+     <width>852</width>
      <height>23</height>
     </rect>
    </property>
@@ -717,19 +755,85 @@ Send</string>
     <property name="title">
      <string>About</string>
     </property>
-    <addaction name="act_aboutSoftware"/>
-    <addaction name="act_aboutQt"/>
+    <addaction name="actionAboutSoftware"/>
+    <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuSetting">
+    <property name="title">
+     <string>Setting</string>
+    </property>
+    <widget class="QMenu" name="menuReturn_Type_2">
+     <property name="title">
+      <string>Send Return Type</string>
+     </property>
+     <addaction name="actionReturn_r_n"/>
+     <addaction name="actionReturn_n"/>
+    </widget>
+    <widget class="QMenu" name="menuEncode">
+     <property name="title">
+      <string>Encode</string>
+     </property>
+     <addaction name="actionGBK"/>
+     <addaction name="actionUTF_8"/>
+    </widget>
+    <addaction name="actionFont"/>
+    <addaction name="menuEncode"/>
+    <addaction name="menuReturn_Type_2"/>
+   </widget>
+   <addaction name="menuSetting"/>
    <addaction name="menuAbout"/>
   </widget>
-  <action name="act_aboutSoftware">
+  <action name="actionAboutSoftware">
    <property name="text">
     <string>About</string>
    </property>
   </action>
-  <action name="act_aboutQt">
+  <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt</string>
+   </property>
+  </action>
+  <action name="actionFont">
+   <property name="text">
+    <string>Font</string>
+   </property>
+  </action>
+  <action name="actionReturn_r_n">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>\r\n</string>
+   </property>
+  </action>
+  <action name="actionReturn_n">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>\n</string>
+   </property>
+  </action>
+  <action name="actionGBK">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GBK</string>
+   </property>
+  </action>
+  <action name="actionUTF_8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>UTF-8</string>
    </property>
   </action>
  </widget>

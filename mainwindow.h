@@ -42,6 +42,16 @@ private slots:
     void on_btn_clearRecvCount_clicked();
     void on_btn_clearSend_clicked();
 
+    void on_actionFont_triggered();
+
+    void on_actionReturn_r_n_triggered();
+
+    void on_actionReturn_n_triggered();
+
+    void on_actionGBK_triggered();
+
+    void on_actionUTF_8_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -50,8 +60,13 @@ private:
     bool flag_serialErr = false;
     bool flag_recvAsHex = false;
     bool flag_sendAsHex = false;
+    bool flag_divideShow = false;
+    bool flag_encodeGBK = true;
+    bool flag_return_n = false;
+    bool flag_autoAddReturn = false;
 
     QTimer tim_scan;
+    QTimer tim_autoSend;
     long recvBytes = 0;
     long sendBytes = 0;
 

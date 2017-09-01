@@ -7,6 +7,8 @@
 QT       += core gui
 QT       += serialport
 
+RC_ICONS = img\icon.ico
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = GM_SerialAssist
