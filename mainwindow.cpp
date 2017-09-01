@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
         msg.append("  3.Encode changeable\n");
         msg.append("  4.Fonts setable\n");
         msg.append("  5.Divide show the recived or send package avaliable\n");
+        msg.append("\nAuthor: GeeMing\n");
+        msg.append("e-mail: geeming@foxmail.com");
 
         about.setText(msg);
         about.exec();
