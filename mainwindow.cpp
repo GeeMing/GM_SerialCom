@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QString msg;
 
         msg.append("The app is a serial tool, which is useful in MCU programing and other situation.\n");
-        msg.append("Special funtion:\n");
+        msg.append("Feature:\n");
         msg.append("  1.Support serial hot plug and reconnect(such as CH340)\n");
         msg.append("  2.Auto display only avaliable serial port\n");
         msg.append("  3.Encode changeable\n");
@@ -61,13 +61,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->chkBox_autoAddReturn, &QCheckBox::clicked, [=](bool checked){
         flag_autoAddReturn = checked;
     });
+    connect(ui->actionSend_Escape_Char, &QAction::toggled, [=](bool checked){
+        flag_sendEscapeChar = checked;
+    });
 
     connect(ui->chkBox_autoSend, &QCheckBox::clicked, [=](bool checked){
-       if (checked){
-           tim_autoSend.start(ui->edt_autoSendPeriod->text().toInt());
-       }else{
-           tim_autoSend.stop();
-       }
+        if (checked){
+            tim_autoSend.start(ui->edt_autoSendPeriod->text().toInt());
+        }else{
+            tim_autoSend.stop();
+        }
     });
     connect(ui->edt_autoSendPeriod, &QLineEdit::textChanged, [=](QString interval){
         tim_autoSend.setInterval(interval.toInt());
@@ -134,7 +137,6 @@ void MainWindow::on_btn_comOpen_clicked()
         }
 
         if (serial.port.isOpen()) {
-            qDebug() << "already opened";
             ui->lb_serialInfo->setText("The serial port has already opened!");
         }
 
@@ -250,8 +252,7 @@ void MainWindow::SerialRead()
 
     if (flag_recvAsHex) {
         QByteArray hexArray;
-        ConvertToHex(recvBuf, hexArray);
-
+        ConvHex2String(recvBuf, hexArray);
         ui->edt_Recv->insertPlainText(QString(hexArray));
     } else {
         if (flag_encodeGBK){
@@ -288,14 +289,22 @@ void MainWindow::on_btn_clearRecv_clicked()
 void MainWindow::on_btn_send_clicked()
 {
     QByteArray sendBuf;
+    QByteArray hexArray;
+    QString sendStr;
     QTime time = QTime::currentTime();
 
     if (flag_com_opened) {
-        if (flag_encodeGBK){
-            sendBuf = ui->edt_send->toPlainText().toLocal8Bit();
-        }else{
-            sendBuf = ui->edt_send->toPlainText().toUtf8();
+        sendStr = ui->edt_send->toPlainText();
+        if (flag_sendEscapeChar && !flag_sendAsHex){
+            RevertBackEscapeChar(sendStr);
         }
+
+        if (flag_encodeGBK){
+            sendBuf = sendStr.toLocal8Bit();
+        }else{
+            sendBuf = sendStr.toUtf8();
+        }
+
         if (flag_autoAddReturn){
             if (flag_return_n){
                 sendBuf += "\n";
@@ -303,15 +312,15 @@ void MainWindow::on_btn_send_clicked()
                 sendBuf +="\r\n";
             }
         }
-        sendBytes += sendBuf.size();
         if (sendBuf.size() == 0){
             return;//empty send
         }
+
+        sendBytes += sendBuf.size();
         ui->lb_countInfo->setText(QString("Recv: %1 B Send: %2 B").arg(recvBytes).arg(sendBytes));
 
         if (flag_sendAsHex) {
-            QByteArray hexArray;
-            ConvertFromHex(sendBuf, hexArray);
+            ConvString2Hex(sendBuf, hexArray);
             serial.port.write(hexArray);
         } else {
             serial.port.write(sendBuf);
@@ -320,7 +329,19 @@ void MainWindow::on_btn_send_clicked()
         if (flag_divideShow){
             QString timeStr;
             timeStr.sprintf("\n[%02d:%02d:%02d.%03d]->:", time.hour(), time.minute(), time.second(), time.msec()%1000);
-            ui->edt_Recv->insertPlainText(timeStr + sendBuf);
+            ui->edt_Recv->moveCursor(QTextCursor::End);
+            if (flag_recvAsHex) {
+                QByteArray final;
+                if (flag_sendAsHex){
+                    ConvString2Hex(sendBuf, hexArray);
+                    ConvHex2String(hexArray, final);
+                }else{
+                    ConvHex2String(sendBuf, final);
+                }
+                ui->edt_Recv->insertPlainText(timeStr + final);
+            }else{
+                ui->edt_Recv->insertPlainText(timeStr + sendBuf);
+            }
             ui->edt_Recv->moveCursor(QTextCursor::End);
         }
     }
@@ -338,7 +359,38 @@ void MainWindow::on_btn_clearSend_clicked()
     ui->edt_send->clear();
 }
 
-void MainWindow::ConvertToHex(QByteArray &src, QByteArray &dest)
+void MainWindow::RevertBackEscapeChar(QString &str)
+{
+    const char *placeholders[6][2]={
+        {"\\r", "\r"},
+        {"\\n", "\n"},
+        {"\\t", "\t"},
+        {"\\v", "\v"},
+        {"\\f", "\f"},
+        {"\\0", "\0"}};
+
+    for (int i=0; i<6; i++){
+        str = str.replace(placeholders[i][0], placeholders[i][1]);
+    }
+
+    int val;
+    int pos = 0;
+    const QRegExp re( "\\\\((x[0-9a-f]{2})|([0-7]{3}))");// \xHH, \OOO
+    while ((pos = re.indexIn(str, pos)) != -1) {
+        bool ok;
+        QString match = re.cap(1);
+        if (match[0] == 'x'){//hex
+            match = match.mid(1);
+            val = match.toInt(&ok, 16);
+        }else{//octal
+            val = match.toInt(&ok, 8);
+        }
+        str = str.replace(pos, 4, QChar(val));
+        pos++;
+    }
+}
+
+void MainWindow::ConvHex2String(QByteArray &src, QByteArray &dest)
 {
     int len = src.size();
 
@@ -361,7 +413,7 @@ void MainWindow::ConvertToHex(QByteArray &src, QByteArray &dest)
     }
 }
 
-void MainWindow::ConvertFromHex(QByteArray &src, QByteArray &dest)
+void MainWindow::ConvString2Hex(QByteArray &src, QByteArray &dest)
 {
 #define IS_HEX(x)   (((x >= 'a') && (x <= 'f')) || ((x >= 'A') && (x <= 'F')) || ((x >= '0') && (x <= '9')))
 

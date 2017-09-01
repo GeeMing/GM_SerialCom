@@ -52,6 +52,7 @@ private slots:
 
     void on_actionUTF_8_triggered();
 
+
 private:
     Ui::MainWindow *ui;
 
@@ -64,14 +65,16 @@ private:
     bool flag_encodeGBK = true;
     bool flag_return_n = false;
     bool flag_autoAddReturn = false;
+    bool flag_sendEscapeChar = true;
 
     QTimer tim_scan;
     QTimer tim_autoSend;
     long recvBytes = 0;
     long sendBytes = 0;
 
-    void ConvertToHex(QByteArray &src, QByteArray &dest);
-    void ConvertFromHex(QByteArray &src, QByteArray &dest);
+    void ConvHex2String(QByteArray &src, QByteArray &dest);
+    void ConvString2Hex(QByteArray &src, QByteArray &dest);
+    void RevertBackEscapeChar(QString &str);
 };
 
 #endif // MAINWINDOW_H

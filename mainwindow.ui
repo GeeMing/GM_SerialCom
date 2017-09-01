@@ -779,6 +779,7 @@ Send</string>
     <addaction name="actionFont"/>
     <addaction name="menuEncode"/>
     <addaction name="menuReturn_Type_2"/>
+    <addaction name="actionSend_Escape_Char"/>
    </widget>
    <addaction name="menuSetting"/>
    <addaction name="menuAbout"/>
@@ -834,6 +835,17 @@ Send</string>
    </property>
    <property name="text">
     <string>UTF-8</string>
+   </property>
+  </action>
+  <action name="actionSend_Escape_Char">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Send Escape Char</string>
    </property>
   </action>
  </widget>
