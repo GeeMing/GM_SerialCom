@@ -1,6 +1,5 @@
 # GM_SerialAssist
-
-    This app is a serial assitant, which is useful in MCU programing and other situation, just a little project in my own hobby,because I am not satisfile with the other same tools' behavior, i wanna built one to fix my needs.
+This app is a serial assitant, which is useful in MCU programing and other situation, just a little project in my own hobby,because I am not satisfile with the other same tools' behavior, i wanna built one to fix my needs.
 
 ## TODO:
 - Add escape character (send & recv )suport (\n \r \xXX)
