@@ -11,7 +11,7 @@ RC_ICONS = img\icon.ico
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = GM_SerialAssist
+TARGET = GM_SerialCom
 TEMPLATE = app
 
 
@@ -20,7 +20,9 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow_old.ui \
+    mainwindow.ui
 
 RESOURCES += \
     resource.qrc
