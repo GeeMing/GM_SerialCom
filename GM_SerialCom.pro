@@ -21,7 +21,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += \
-    mainwindow_old.ui \
     mainwindow.ui
 
 RESOURCES += \

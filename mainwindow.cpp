@@ -270,7 +270,7 @@ void MainWindow::SerialError(QSerialPort::SerialPortError error)
 {
     qDebug() << "serial error" << error;
 
-    if (error == QSerialPort::ResourceError) {// hot plug
+    if (error != QSerialPort::NoError) {
         if (!flag_serialErr) {
             flag_serialErr = true;
             serial.port.close();
@@ -293,7 +293,13 @@ void MainWindow::on_btn_send_clicked()
     QByteArray sendBuf;
     QByteArray hexArray;
     QString sendStr;
-    QTime time = QTime::currentTime();
+    QTime time;
+
+    if (flag_serialErr){
+        return;
+    }
+
+    time = QTime::currentTime();
 
     if (flag_com_opened) {
         sendStr = ui->edt_send->toPlainText();
