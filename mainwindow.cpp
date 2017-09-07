@@ -12,21 +12,16 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QtSerialPortDepends>
 
-//TODO: Add Escape character support (\n \r \xXX, etc)
-
-QFile file;
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    SaveConfig();
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    file.setFileName("serial.dat");
-    file.remove();// clear the file
-    if (!file.open(QIODevice::ReadWrite)) {
-        qDebug() << "file open fail";
-    }
 
     ui->edt_autoSendPeriod->setValidator(new QIntValidator(1, 10000, this));
 
@@ -51,23 +46,23 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, &QAction::triggered, [=](bool){
         QApplication::aboutQt();
     });
-    connect(ui->chkBox_recvAsHex, &QCheckBox::clicked, [=](bool checked){
+    connect(ui->chkBox_recvAsHex, &QCheckBox::toggled, [=](bool checked){
         flag_recvAsHex = checked;
     });
-    connect(ui->chkBox_sendAsHex, &QCheckBox::clicked, [=](bool checked){
+    connect(ui->chkBox_sendAsHex, &QCheckBox::toggled, [=](bool checked){
         flag_sendAsHex = checked;
     });
-    connect(ui->chkBox_divideShow, &QCheckBox::clicked, [=](bool checked){
+    connect(ui->chkBox_divideShow, &QCheckBox::toggled, [=](bool checked){
         flag_divideShow = checked;
     });
-    connect(ui->chkBox_autoAddReturn, &QCheckBox::clicked, [=](bool checked){
+    connect(ui->chkBox_autoAddReturn, &QCheckBox::toggled, [=](bool checked){
         flag_autoAddReturn = checked;
     });
     connect(ui->actionSend_Escape_Char, &QAction::toggled, [=](bool checked){
         flag_sendEscapeChar = checked;
     });
 
-    connect(ui->chkBox_autoSend, &QCheckBox::clicked, [=](bool checked){
+    connect(ui->chkBox_autoSend, &QCheckBox::toggled, [=](bool checked){
         if (checked){
             tim_autoSend.start(ui->edt_autoSendPeriod->text().toInt());
         }else{
@@ -123,6 +118,8 @@ MainWindow::MainWindow(QWidget *parent) :
             << "2";
     ui->cbox_stopbits->addItems(strList);
     ui->cbox_stopbits->setCurrentIndex(0);
+
+    LoadConfig();
 }
 
 MainWindow::~MainWindow()
@@ -253,26 +250,26 @@ void MainWindow::SerialRead()
     recvBytes += recvBuf.size();
     ui->lb_countInfo->setText(QString("Recv: %1 B Send: %2 B").arg(recvBytes).arg(sendBytes));
 
-    ui->edt_Recv->moveCursor(QTextCursor::End);
+    ui->edt_recv->moveCursor(QTextCursor::End);
 
     if (flag_divideShow){
         QString timeStr;
         timeStr.sprintf("\n[%02d:%02d:%02d.%03d]<-:", time.hour(), time.minute(), time.second(), time.msec()%1000);
-        ui->edt_Recv->insertPlainText(timeStr);
+        ui->edt_recv->insertPlainText(timeStr);
     }
 
     if (flag_recvAsHex) {
         QByteArray hexArray;
         ConvHex2String(recvBuf, hexArray);
-        ui->edt_Recv->insertPlainText(QString(hexArray));
+        ui->edt_recv->insertPlainText(QString(hexArray));
     } else {
         if (flag_encodeGBK){
-            ui->edt_Recv->insertPlainText(QString::fromLocal8Bit(recvBuf));
+            ui->edt_recv->insertPlainText(QString::fromLocal8Bit(recvBuf));
         }else{
-            ui->edt_Recv->insertPlainText(QString(recvBuf));
+            ui->edt_recv->insertPlainText(QString(recvBuf));
         }
     }
-    ui->edt_Recv->moveCursor(QTextCursor::End);
+    ui->edt_recv->moveCursor(QTextCursor::End);
 }
 
 void MainWindow::SerialError(QSerialPort::SerialPortError error)
@@ -297,7 +294,7 @@ void MainWindow::SerialError(QSerialPort::SerialPortError error)
 void MainWindow::on_btn_clearRecv_clicked()
 {
     recvBytes = 0;
-    ui->edt_Recv->clear();
+    ui->edt_recv->clear();
     ui->lb_countInfo->setText(QString("Recv: %1 B Send: %2 B").arg(recvBytes).arg(sendBytes));
 }
 
@@ -350,7 +347,7 @@ void MainWindow::on_btn_send_clicked()
         if (flag_divideShow){
             QString timeStr;
             timeStr.sprintf("\n[%02d:%02d:%02d.%03d]->:", time.hour(), time.minute(), time.second(), time.msec()%1000);
-            ui->edt_Recv->moveCursor(QTextCursor::End);
+            ui->edt_recv->moveCursor(QTextCursor::End);
             if (flag_recvAsHex) {
                 QByteArray final;
                 if (flag_sendAsHex){
@@ -359,11 +356,11 @@ void MainWindow::on_btn_send_clicked()
                 }else{
                     ConvHex2String(sendBuf, final);
                 }
-                ui->edt_Recv->insertPlainText(timeStr + final);
+                ui->edt_recv->insertPlainText(timeStr + final);
             }else{
-                ui->edt_Recv->insertPlainText(timeStr + sendBuf);
+                ui->edt_recv->insertPlainText(timeStr + sendBuf);
             }
-            ui->edt_Recv->moveCursor(QTextCursor::End);
+            ui->edt_recv->moveCursor(QTextCursor::End);
         }
     }
 }
@@ -486,11 +483,11 @@ void MainWindow::ConvString2Hex(QByteArray &src, QByteArray &dest)
 void MainWindow::on_actionFont_triggered()
 {
     bool ok;
-    QFont oldFont = ui->edt_Recv->font();
+    QFont oldFont = ui->edt_recv->font();
     QFont newFont = QFontDialog::getFont(&ok, oldFont, this, "字体");
     if (ok){
         ui->edt_send->setFont(newFont);
-        ui->edt_Recv->setFont(newFont);
+        ui->edt_recv->setFont(newFont);
     }
 }
 
@@ -513,7 +510,115 @@ void MainWindow::on_actionGBK_triggered()
 }
 
 void MainWindow::on_actionUTF_8_triggered()
-{
+{    
     flag_encodeGBK = false;
     ui->actionGBK->setChecked(false);
+}
+
+void MainWindow::ApplyConfig(const QJsonObject &json)
+{
+    ui->cbox_baudrate->setCurrentText(json.value("baudrate").toString("115200"));
+    ui->cbox_parity->setCurrentText(json.value("parity").toString("None"));
+    ui->cbox_stopbits->setCurrentText(json.value("stopbits").toString("1"));
+    ui->chkBox_autoAddReturn->setChecked(json.value("autoAddReturn").toBool(false));
+    ui->chkBox_autoSend->setChecked(json.value("autoSend").toBool(false));
+    ui->chkBox_divideShow->setChecked(json.value("divideShow").toBool(false));
+    ui->chkBox_recvAsHex->setChecked(json.value("recvAsHex").toBool(false));
+    ui->chkBox_sendAsHex->setChecked(json.value("sendAsHex").toBool(false));
+    ui->edt_autoSendPeriod->setText(json.value("autoSendPeriod").toString("1000"));
+    ui->edt_send->setPlainText(json.value("sendBufferText").toString(""));
+
+    if (json.value("sendEscapeChar").toBool(true)){
+        ui->actionSend_Escape_Char->setChecked(true);
+    }else{
+        ui->actionSend_Escape_Char->setChecked(false);
+    }
+
+    if (json["encode"].toString() == "GBK"){
+        ui->actionGBK->trigger();
+        ui->actionGBK->setChecked(true);//without this, check will be unchecked
+    }else{
+        ui->actionUTF_8->trigger();
+        ui->actionUTF_8->setChecked(true);//without this, check will be unchecked
+    }
+
+    if (json["returnType"].toString() == "_n"){
+        ui->actionReturn_n->trigger();
+        ui->actionReturn_n->setChecked(true);//without this, check will be unchecked
+    }else{
+        ui->actionReturn_r_n->trigger();
+        ui->actionReturn_r_n->setChecked(true);//without this, check will be unchecked
+    }
+
+    QFont font;
+    font.fromString(json.value("font").toString("YaHei Consolas Hybrid,10,-1,5,50,0,0,0,0,0"));
+    ui->edt_send->setFont(font);
+    ui->edt_recv->setFont(font);
+
+}
+
+QJsonObject MainWindow::GetCurrentConfig()
+{
+    QJsonObject json;
+
+    json["version"] = APP_VERSION;
+    json["baudrate"] = ui->cbox_baudrate->currentText();
+    json["parity"] = ui->cbox_parity->currentText();
+    json["stopbits"] = ui->cbox_stopbits->currentText();
+    json["autoAddReturn"] = ui->chkBox_autoAddReturn->isChecked();
+    json["autoSend"] = ui->chkBox_autoSend->isChecked();
+    json["divideShow"] = ui->chkBox_divideShow->isChecked();
+    json["recvAsHex"] = ui->chkBox_recvAsHex->isChecked();
+    json["sendAsHex"] = ui->chkBox_sendAsHex->isChecked();
+    json["font"] = ui->edt_recv->font().toString();
+    json["autoSendPeriod"] = ui->edt_autoSendPeriod->text();
+    json["sendBufferText"] = ui->edt_send->toPlainText();
+//    json["saveRecv"] = ui->chkBox_saveRecv->isChecked();
+
+    json["sendEscapeChar"] = ui->actionSend_Escape_Char->isChecked();
+    if (ui->actionGBK->isChecked()){
+        json["encode"] = "GBK";
+    }else{
+        json["encode"] = "UTF-8";
+    }
+
+    if (ui->actionReturn_n->isChecked()){
+        json["returnType"] = "_n";
+    }else{
+        json["returnType"] = "_n_r";
+    }
+
+    return json;
+}
+
+void MainWindow::LoadConfig()
+{
+    QFile file("config.json");
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "file open fail";
+        this->setWindowTitle(this->windowTitle() +" (config file open fail)");
+    }else{
+        QByteArray configData = file.readAll();
+        file.close();
+        QJsonDocument jsonDoc(QJsonDocument::fromJson(configData));
+        ApplyConfig(jsonDoc.object());
+    }
+}
+
+void MainWindow::SaveConfig()
+{
+    qDebug() << "save config";
+
+    QFile file("config.json");
+    file.remove();
+
+    if (!file.open(QIODevice::ReadWrite)) {
+        qDebug() << "file open fail";
+        this->setWindowTitle(this->windowTitle() +" (config file open fail)");
+    }else{
+        QJsonDocument jsonDoc(GetCurrentConfig());
+        file.write(jsonDoc.toJson());
+        file.close();
+    }
 }

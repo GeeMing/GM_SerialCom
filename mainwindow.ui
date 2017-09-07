@@ -59,7 +59,7 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="QPlainTextEdit" name="edt_Recv">
+            <widget class="QPlainTextEdit" name="edt_recv">
              <property name="font">
               <font>
                <family>YaHei Consolas Hybrid</family>
@@ -506,6 +506,9 @@
            </item>
            <item>
             <widget class="QCheckBox" name="chkBox_saveRecv">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="font">
               <font>
                <family>Consolas</family>
@@ -564,6 +567,22 @@
            </item>
           </layout>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item>
          <widget class="QGroupBox" name="groupBox">
@@ -700,22 +719,6 @@
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0">
              <property name="spacing">
               <number>1</number>
@@ -769,10 +772,8 @@ Send</string>
             </layout>
            </item>
           </layout>
-          <zorder></zorder>
           <zorder>chkBox_autoAddReturn</zorder>
           <zorder>chkBox_sendAsHex</zorder>
-          <zorder>verticalSpacer_3</zorder>
          </widget>
         </item>
        </layout>

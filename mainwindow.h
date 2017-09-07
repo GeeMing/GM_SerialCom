@@ -7,6 +7,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QtSerialPort/QtSerialPortDepends>
 
+#define APP_VERSION     "1.0"
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +23,9 @@ struct serialInfo {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -73,6 +77,10 @@ private:
     void ConvHex2String(QByteArray &src, QByteArray &dest);
     void ConvString2Hex(QByteArray &src, QByteArray &dest);
     void RevertBackEscapeChar(QString &str);
+    void LoadConfig();
+    void SaveConfig();
+    QJsonObject GetCurrentConfig();
+    void ApplyConfig(const QJsonObject &json);
 };
 
 #endif // MAINWINDOW_H
