@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) :
             [ = ](int index){
         if (index != -1) {
             if (!flag_serialErr) {
-                ui->lb_serialInfo->setText(serial.comName[index] + "  " + serial.info[index]);
+                ui->lb_serialInfo->setText(serial.nameList[index] + "  " + serial.infoList[index]);
             }
         }
     });
@@ -134,7 +134,7 @@ void MainWindow::on_btn_comOpen_clicked()
 {
     if (!flag_com_opened) {
 
-        if (ui->cbox_port->currentText() == ""){
+        if (ui->cbox_port->currentText().isEmpty()){
             return;
         }
 
@@ -143,8 +143,8 @@ void MainWindow::on_btn_comOpen_clicked()
         }
 
         /******************  Serial port config ********************/
-        serial.curComName = serial.comName[ui->cbox_port->currentIndex()];
-        serial.port.setPortName(serial.curComName);
+        serial.curName = serial.nameList[ui->cbox_port->currentIndex()];
+        serial.port.setPortName(serial.curName);
         serial.port.setDataBits(QSerialPort::Data8);
         serial.port.setFlowControl(QSerialPort::NoFlowControl);
         serial.port.setBaudRate(ui->cbox_baudrate->currentText().toInt());
@@ -183,6 +183,7 @@ void MainWindow::on_btn_comOpen_clicked()
         ui->btn_comOpen->setText("Close");
         ui->cbox_port->setEnabled(false);
         tim_scan.stop();
+
     } else {
         serial.port.close();
         flag_com_opened = false;
@@ -190,48 +191,56 @@ void MainWindow::on_btn_comOpen_clicked()
         ui->lb_led->setPixmap(QPixmap(":/img/led_red").scaled(24, 24));
         ui->btn_comOpen->setText("Open");
         ui->cbox_port->setEnabled(true);
+        serial.nameList.clear();
+        ui->cbox_port->clear();
         tim_scan.start();
+        ScanSerialPort();
     }
 }
 
 void MainWindow::ScanSerialPort()
 {
-    QStringList oldCom = serial.comName;
+    QStringList oldCom = serial.nameList;
 
-    serial.comName.clear();
-    serial.info.clear();
+    serial.nameList.clear();
+    serial.infoList.clear();
 
     QSerialPort serialPort;
     foreach(QSerialPortInfo serialInfo, QSerialPortInfo::availablePorts()){
         serialPort.setPort(serialInfo);
-        serial.comName.append(serialInfo.portName());
-        serial.info.append(serialInfo.description());
+        serial.nameList.append(serialInfo.portName());
+        serial.infoList.append(serialInfo.description());
         serialPort.close();
     }
 
-    if (flag_serialErr) {
-        if (serial.comName.contains(serial.curComName)) {
+    if (!flag_serialErr) {
+        if (oldCom == serial.nameList){
+            return;
+        }
+        ui->cbox_port->clear();
+        for (int i = 0; i < serial.nameList.count(); i++) {
+            ui->cbox_port->addItem(serial.nameList[i] + "  " + serial.infoList[i]);
+        }
+
+    }else{
+        if (serial.nameList.contains(serial.curName)) {
             if (!serial.port.open(QIODevice::ReadWrite)) {
-                qDebug() << "reconnect: Serial open fail";
+                qDebug() << "reconnect: fail";
                 return;
             }
 
-            qDebug() << "serial reconnect";
+            qDebug() << "reconnect: success";
+            ui->cbox_port->clear();
+            for (int i = 0; i < serial.nameList.count(); i++) {
+                ui->cbox_port->addItem(serial.nameList[i] + "  " + serial.infoList[i]);
+            }
+            int index = serial.curName.indexOf(serial.curName);
+            ui->cbox_port->setCurrentText(serial.curName+ "  " + serial.infoList[index]);
             ui->lb_led->setPixmap(QPixmap(":/img/led_green").scaled(24, 24));
-
+            ui->lb_serialInfo->setText(serial.nameList[ui->cbox_port->currentIndex()]
+                    + "  " + serial.infoList[ui->cbox_port->currentIndex()]);
             tim_scan.stop();
             flag_serialErr = false;
-        }
-    }
-
-    if (oldCom == serial.comName)
-        return;
-
-    ui->cbox_port->clear();
-
-    if (serial.comName.count() > 0) {
-        for (int i = 0; i < serial.comName.count(); i++) {
-            ui->cbox_port->addItem(serial.comName[i] + "  " + serial.info[i]);
         }
     }
 }
@@ -270,13 +279,17 @@ void MainWindow::SerialError(QSerialPort::SerialPortError error)
 {
     qDebug() << "serial error" << error;
 
+    if (!flag_com_opened){
+        return;
+    }
+
     if (error != QSerialPort::NoError) {
         if (!flag_serialErr) {
             flag_serialErr = true;
             serial.port.close();
             tim_scan.start();
-
             ui->lb_led->setPixmap(QPixmap(":/img/led_yellow").scaled(24, 24));
+            ui->lb_serialInfo->setText(QString("Serial error:%1, trying to reconnect...").arg(error));
         }
     }
 }

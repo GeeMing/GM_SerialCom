@@ -13,13 +13,11 @@ class MainWindow;
 }
 
 struct serialInfo {
-    QStringList comName;
-    QStringList info;
-    QString curComName;
+    QStringList nameList;
+    QStringList infoList;
+    QString curName;
     QSerialPort port;
 } ;
-
-
 
 class MainWindow : public QMainWindow
 {
