@@ -248,7 +248,10 @@ void MainWindow::SerialRead()
     QByteArray recvBuf = serial.port.readAll();
 
     recvBytes += recvBuf.size();
-    ui->lb_countInfo->setText(QString("Recv: %1 B Send: %2 B").arg(recvBytes).arg(sendBytes));
+
+    QString info = QString("Recv: %1 B Send: %2 B").arg(recvBytes).arg(sendBytes)
+            .replace(QRegExp("(\\d)(?=(\\d{3})+(?!\\d))"), "\\1,");
+    ui->lb_countInfo->setText(info);
 
     ui->edt_recv->moveCursor(QTextCursor::End);
 
@@ -510,7 +513,7 @@ void MainWindow::on_actionGBK_triggered()
 }
 
 void MainWindow::on_actionUTF_8_triggered()
-{    
+{
     flag_encodeGBK = false;
     ui->actionGBK->setChecked(false);
 }
